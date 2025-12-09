@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tic-Tac-Toe Game</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Tic-Tac-Toe</h1>
+
+      <div class="game-info">
+        <div class="player-turn">
+          Player <span id="current-player">X</span>'s Turn
+        </div>
+        <div class="scores">
+          <div>X Wins: <span id="x-wins">0</span></div>
+          <div>O Wins: <span id="o-wins">0</span></div>
+        </div>
+      </div>
+
+      <div class="board-container">
+        <div class="game-board" id="game-board">
+
+        </div>
+      </div>
+
+      <div class="message" id="message"></div>
+
+      <div class="button-info above-buttons">
+        <p>Choose an action:</p>
+      </div>
+
+      <div class="controls">
+        <button id="reset-btn">Reset Game</button>
+        <button id="new-game-btn">New Game</button>
+      </div>
+
+      <div class="button-info below-buttons">
+        <div class="button-explanation">
+          <div class="explanation-item">
+            <span class="button-name">Reset Game:</span>
+            <span class="button-desc"
+              >Clears the board but keeps the scores</span
+            >
+          </div>
+          <div class="explanation-item">
+            <span class="button-name">New Game:</span>
+            <span class="button-desc"
+              >Resets everything including scores to 0-0</span
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
