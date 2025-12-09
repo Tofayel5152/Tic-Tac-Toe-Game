@@ -1,0 +1,242 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+  color: white;
+  padding: 20px;
+}
+
+.container {
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+  margin-bottom: 20px;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.game-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+
+.scores {
+  display: flex;
+  gap: 20px;
+}
+
+.player-turn {
+  font-weight: bold;
+  font-size: 1.3rem;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.board-container {
+  position: relative;
+  display: inline-block;
+  margin: 20px 0;
+}
+
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  width: 300px;
+  height: 300px;
+  position: relative;
+}
+
+.cell {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 3rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  height: 100%;
+}
+
+.cell:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.cell.x {
+  color: #ff4d4d;
+}
+
+.cell.o {
+  color: #4da6ff;
+}
+
+.win-line {
+  position: absolute;
+  background: #fff;
+  height: 8px;
+  border-radius: 4px;
+  transform-origin: 0 0;
+  z-index: 10;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  pointer-events: none;
+}
+
+.button-info {
+  margin: 15px 0;
+}
+
+.above-buttons {
+  margin-bottom: 10px;
+}
+
+.above-buttons p {
+  font-size: 1.1rem;
+  color: #ccc;
+}
+
+.below-buttons {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.button-explanation {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.explanation-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.button-name {
+  font-weight: bold;
+  color: #4da6ff;
+  min-width: 100px;
+}
+
+.button-desc {
+  color: #ccc;
+  font-size: 0.95rem;
+}
+
+.controls {
+  margin-top: 10px;
+}
+
+button {
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  background: #4da6ff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 0 10px;
+}
+
+button:hover {
+  background: #2d8ae6;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+#reset-btn {
+  background: #ff4d4d;
+}
+
+#reset-btn:hover {
+  background: #e60000;
+}
+
+.message {
+  margin-top: 20px;
+  font-size: 1.3rem;
+  min-height: 30px;
+  font-weight: bold;
+}
+
+.win {
+  color: #4dff88;
+}
+
+.draw {
+  color: #ffcc00;
+}
+
+@media (max-width: 500px) {
+  .container {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .cell {
+    font-size: 2.5rem;
+  }
+
+  .game-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .game-board {
+    width: 280px;
+    height: 280px;
+  }
+
+  .button-explanation {
+    text-align: center;
+  }
+
+  .explanation-item {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .button-name {
+    min-width: auto;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  button {
+    margin: 0;
+  }
+}
