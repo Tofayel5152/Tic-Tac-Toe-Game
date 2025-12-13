@@ -1,86 +1,118 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const gameBoard = document.getElementById("game-board");
-  const currentPlayerElement = document.getElementById("current-player");
-  const messageElement = document.getElementById("message");
-  const resetButton = document.getElementById("reset-btn");
-  const newGameButton = document.getElementById("new-game-btn");
-  const xWinsElement = document.getElementById("x-wins");
-  const oWinsElement = document.getElementById("o-wins");
+class TicTacToe {
+  constructor() {
+    this.board = document.getElementById("game-board");
+    this.messageElement = document.getElementById("message");
+    this.resetButton = document.getElementById("reset-btn");
+    this.newGameButton = document.getElementById("new-game-btn");
+    this.currentPlayerElement = document.getElementById("current-player");
+    this.xWinsElement = document.getElementById("x-wins");
+    this.oWinsElement = document.getElementById("o-wins");
 
-  let currentPlayer = "X";
-  let gameState = ["", "", "", "", "", "", "", "", ""];
-  let gameActive = true;
-  let xWins = 0;
-  let oWins = 0;
+    this.currentPlayer = "X";
+    this.gameState = Array(9).fill("");
+    this.gameActive = true;
+    this.xWins = 0;
+    this.oWins = 0;
 
-  const winConditions = [
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6],
-  ];
+    this.winConditions = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8], // Rows
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8], // Columns
+      [0, 4, 8],
+      [2, 4, 6], // Diagonals
+    ];
 
-  function initializeBoard() {
-    gameBoard.innerHTML = "";
-    for (let i = 0; i < 9; i++) {
-      const cell = document.createElement("div");
-      cell.classList.add("cell");
-      cell.setAttribute("data-index", i);
-      cell.addEventListener("click", handleCellClick);
-      gameBoard.appendChild(cell);
-    }
-
-    document.querySelectorAll(".win-line").forEach((line) => line.remove());
+    this.loadScores();
+    this.initializeBoard();
+    this.addEventListeners();
   }
 
-  function handleCellClick(event) {
-    const clickedCell = event.target;
-    const cellIndex = parseInt(clickedCell.getAttribute("data-index"));
+  loadScores() {
+    const savedX = localStorage.getItem("xWins");
+    const savedO = localStorage.getItem("oWins");
+    if (savedX) this.xWins = parseInt(savedX);
+    if (savedO) this.oWins = parseInt(savedO);
+    this.updateScoreDisplay();
+  }
 
-    if (gameState[cellIndex] !== "" || !gameActive) {
+  saveScores() {
+    localStorage.setItem("xWins", this.xWins);
+    localStorage.setItem("oWins", this.oWins);
+  }
+
+  updateScoreDisplay() {
+    this.xWinsElement.textContent = this.xWins;
+    this.oWinsElement.textContent = this.oWins;
+  }
+
+  initializeBoard() {
+    this.board.innerHTML = "";
+    this.gameState.forEach((_, index) => {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      cell.setAttribute("data-index", index);
+      cell.addEventListener("click", (e) => this.handleCellClick(e, index));
+      this.board.appendChild(cell);
+    });
+  }
+
+  addEventListeners() {
+    this.resetButton.addEventListener("click", () => this.resetGame());
+    this.newGameButton.addEventListener("click", () => this.newGame());
+  }
+
+  handleCellClick(event, index) {
+    const clickedCell = event.target;
+
+    if (this.gameState[index] !== "" || !this.gameActive) {
       return;
     }
 
-    gameState[cellIndex] = currentPlayer;
-    clickedCell.textContent = currentPlayer;
-    clickedCell.classList.add(currentPlayer.toLowerCase());
+    this.gameState[index] = this.currentPlayer;
+    clickedCell.textContent = this.currentPlayer;
+    clickedCell.classList.add(this.currentPlayer.toLowerCase());
 
-    const winningCombo = checkWin();
-    if (winningCombo) {
-      drawWinLine(winningCombo);
-      endGame(false);
-    } else if (checkDraw()) {
-      endGame(true);
-    } else {
-      currentPlayer = currentPlayer === "X" ? "O" : "X";
-      currentPlayerElement.textContent = currentPlayer;
+    if (this.checkWin()) {
+      return;
     }
+
+    if (this.checkDraw()) {
+      this.endGame(true);
+      return;
+    }
+
+    this.currentPlayer = this.currentPlayer === "X" ? "O" : "X";
+    this.currentPlayerElement.textContent = this.currentPlayer;
   }
 
-  function checkWin() {
-    for (let i = 0; i < winConditions.length; i++) {
-      const [a, b, c] = winConditions[i];
+  checkWin() {
+    for (const condition of this.winConditions) {
+      const [a, b, c] = condition;
       if (
-        gameState[a] &&
-        gameState[a] === gameState[b] &&
-        gameState[a] === gameState[c]
+        this.gameState[a] &&
+        this.gameState[a] === this.gameState[b] &&
+        this.gameState[a] === this.gameState[c]
       ) {
-        return winConditions[i];
+        this.drawWinLine(condition);
+        this.endGame(false);
+        return true;
       }
     }
-    return null;
+    return false;
   }
 
-  function drawWinLine([a, b, c]) {
+  checkDraw() {
+    return !this.gameState.includes("");
+  }
+
+  drawWinLine([a, b, c]) {
     const cells = document.querySelectorAll(".cell");
     const cellA = cells[a];
     const cellC = cells[c];
-
-    const boardRect = gameBoard.getBoundingClientRect();
+    const boardRect = this.board.getBoundingClientRect();
     const rectA = cellA.getBoundingClientRect();
     const rectC = cellC.getBoundingClientRect();
 
@@ -89,66 +121,86 @@ document.addEventListener("DOMContentLoaded", () => {
     const endX = rectC.left + rectC.width / 2 - boardRect.left;
     const endY = rectC.top + rectC.height / 2 - boardRect.top;
 
-    const length = Math.sqrt(
-      Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)
-    );
+    const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
     const angle = (Math.atan2(endY - startY, endX - startX) * 180) / Math.PI;
+    
+    // Extend the line
+    const extendBy = 20; // Extend by 20px on each side
+    const angleRad = (angle * Math.PI) / 180;
+    
+    const extendedStartX = startX - Math.cos(angleRad) * extendBy;
+    const extendedStartY = startY - Math.sin(angleRad) * extendBy;
+    
+    // Total length includes the main length plus extension on both sides
+    const fullLength = length + (extendBy * 2);
 
     const line = document.createElement("div");
     line.classList.add("win-line");
-    line.style.width = `${length}px`;
-    line.style.left = `${startX}px`;
-    line.style.top = `${startY}px`;
+    line.style.setProperty("--length", `${fullLength}px`); 
+    line.style.width = "0px"; 
+    
+    line.style.left = `${extendedStartX}px`;
+    // Offset top by half height (3px) so the transform-origin (0, 50%) is exactly at (extendedStartX, extendedStartY)
+    line.style.top = `${extendedStartY - 3}px`;
     line.style.transform = `rotate(${angle}deg)`;
-
-    gameBoard.appendChild(line);
+    line.style.transformOrigin = "0 50%"; // Rotate from the start point
+    
+    this.board.appendChild(line);
   }
 
-  function checkDraw() {
-    return !gameState.includes("");
-  }
-
-  function endGame(isDraw) {
-    gameActive = false;
+  endGame(isDraw) {
+    this.gameActive = false;
+    this.messageElement.classList.add("show");
+    document.querySelector(".player-turn").classList.add("hidden");
 
     if (isDraw) {
-      messageElement.textContent = "Game ended in a draw!";
-      messageElement.classList.add("draw");
+      this.messageElement.textContent = "It's a Draw!";
+      this.messageElement.style.color = "#ffcc00"; // Draw color
     } else {
-      messageElement.textContent = `Player ${currentPlayer} wins!`;
-      messageElement.classList.add("win");
+      this.messageElement.textContent = `Player ${this.currentPlayer} Wins!`;
+      this.messageElement.style.color =
+        this.currentPlayer === "X" ? "#ff4d4d" : "#4da6ff";
 
-      if (currentPlayer === "X") {
-        xWins++;
-        xWinsElement.textContent = xWins;
+      if (this.currentPlayer === "X") {
+        this.xWins++;
       } else {
-        oWins++;
-        oWinsElement.textContent = oWins;
+        this.oWins++;
       }
+      this.saveScores();
+      this.updateScoreDisplay();
     }
   }
 
-  function resetGame() {
-    gameState = ["", "", "", "", "", "", "", "", ""];
-    gameActive = true;
-    currentPlayer = "X";
-    currentPlayerElement.textContent = currentPlayer;
-    messageElement.textContent = "";
-    messageElement.classList.remove("win", "draw");
+  resetGame() {
+    this.gameState.fill("");
+    this.gameActive = true;
+    this.currentPlayer = "X";
+    this.currentPlayerElement.textContent = this.currentPlayer;
 
-    initializeBoard();
+    this.messageElement.textContent = "";
+    this.messageElement.classList.remove("show");
+    document.querySelector(".player-turn").classList.remove("hidden");
+
+    // Clear win lines
+    const winLine = this.board.querySelector(".win-line");
+    if (winLine) winLine.remove();
+
+    // Reset cells
+    document.querySelectorAll(".cell").forEach((cell) => {
+      cell.textContent = "";
+      cell.classList.remove("x", "o");
+    });
   }
 
-  function newGame() {
-    xWins = 0;
-    oWins = 0;
-    xWinsElement.textContent = xWins;
-    oWinsElement.textContent = oWins;
-    resetGame();
+  newGame() {
+    this.xWins = 0;
+    this.oWins = 0;
+    this.saveScores();
+    this.updateScoreDisplay();
+    this.resetGame();
   }
+}
 
-  resetButton.addEventListener("click", resetGame);
-  newGameButton.addEventListener("click", newGame);
-
-  initializeBoard();
+document.addEventListener("DOMContentLoaded", () => {
+  new TicTacToe();
 });
